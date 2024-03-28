@@ -34,13 +34,13 @@ export class User {
   @Prop()
   isDeleted: boolean
 
-  @Prop()
+  @Prop({ type: Object })
   deletedBy: {
     _id: mongoose.Schema.Types.ObjectId
     email: string
   }
 
-  @Prop()
+  @Prop({ type: Object })
   updatedBy: {
     _id: mongoose.Schema.Types.ObjectId
     email: string
@@ -49,7 +49,7 @@ export class User {
   @Prop()
   role: string
 
-  @Prop()
+  @Prop({ type: Object })
   company: {
     _id: mongoose.Schema.Types.ObjectId
     email: string

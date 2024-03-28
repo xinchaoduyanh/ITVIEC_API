@@ -1,9 +1,9 @@
-import { Injectable } from '@nestjs/common'
+import { Injectable, UnauthorizedException } from '@nestjs/common'
 import { User, UserDocument } from './schemas/user.schema'
 import { InjectModel } from '@nestjs/mongoose'
 import mongoose from 'mongoose'
 import { compareSync, genSaltSync, hashSync } from 'bcryptjs'
-import { CreateUserDto } from './dto/create-user.dto'
+import { CreateUserDto, RegisterUserDto } from './dto/create-user.dto'
 import { UpdateUserDto } from './dto/update-user.dto'
 import { SoftDeleteModel } from 'soft-delete-plugin-mongoose'
 @Injectable()
@@ -49,5 +49,24 @@ export class UsersService {
   }
   isValidPassword(password: string, hashPassword: string) {
     return compareSync(password, hashPassword)
+  }
+  async register(RegisterUserDto: RegisterUserDto) {
+    const { email, password, name, gender, address, age } = RegisterUserDto
+    const existEmail = await this.userModel.findOne({
+      email
+    })
+    if (existEmail) {
+      throw new UnauthorizedException('Email already exists')
+    }
+    const user = await this.userModel.create({
+      email,
+      password: this.hashPassword(password),
+      name,
+      age,
+      gender,
+      address,
+      role: 'USER'
+    })
+    return user
   }
 }

@@ -38,3 +38,32 @@ export class CreateUserDto {
   @Type(() => Company)
   company: Company
 }
+export class RegisterUserDto {
+  @IsNotEmpty({ message: 'Name is required' })
+  name: string
+
+  @IsEmail({}, { message: 'Invalid email' })
+  @IsNotEmpty({ message: 'Email is required' })
+  @MinLength(6)
+  email: string
+
+  @IsNotEmpty({ message: 'Age is required' })
+  age: string
+
+  @IsNotEmpty({ message: 'Gender is required' })
+  gender: string
+
+  // @IsNotEmpty({ message: 'Role is required' })
+  role: string
+
+  @MinLength(6, { message: 'Password must be at least 6 characters' })
+  password: string
+
+  @IsNotEmpty({ message: 'Address is required' })
+  address: string
+  // @IsNotEmptyObject()
+  // @IsObject()
+  // @ValidateNested()
+  // @Type(() => Company)
+  // company: Company
+}

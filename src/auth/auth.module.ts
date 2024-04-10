@@ -14,8 +14,8 @@ import { AuthController } from './auth.controller'
     PassportModule,
     JwtModule.registerAsync({
       useFactory: async (configService: ConfigService) => ({
-        secret: configService.get<string>('JWT_ACCESS_TOKEN'),
-        signOptions: { expiresIn: ms(configService.get<string>('JWT_EXPIRES')) }
+        secret: configService.get<string>('JWT_ACCESS_TOKEN_SECRET'),
+        signOptions: { expiresIn: ms(configService.get<string>('JWT_ACCESS_TOKEN_EXPIRES')) }
       }),
       inject: [ConfigService]
     })

@@ -24,28 +24,41 @@ export class UsersService {
 
   async findOne(id: string) {
     if (mongoose.Types.ObjectId.isValid(id) === false) {
-      // throw new Error('Invalid ID')
-      return 'Invalid ID'
+      throw new Error('Invalid ID')
+      // return 'Invalid ID'
     }
     const user = await this.userModel.findOne({ _id: id })
-    return user
+    return {
+      message: 'User found successfully',
+      user
+    }
   }
   findOnebyUsername(username: string) {
     return this.userModel.findOne({
       email: username
     })
   }
-  async update(updateUserDto: UpdateUserDto) {
-    const { email, _id, name } = updateUserDto
-    const user = await this.userModel.findOneAndUpdate({ _id: _id }, { email, name }, { new: true })
+  async updateUser(updateUserDto: UpdateUserDto) {
+    // const user = await this.userModel.findOneAndUpdate({ _id: _id }, updateUserDto, { new: true })
+
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const { email, _id, ...updateUserDtoWithoutEmail } = updateUserDto
+    const user = await this.userModel.findOneAndUpdate({ _id: _id }, updateUserDtoWithoutEmail, { new: true })
+    if (!user) {
+      throw new UnauthorizedException('User not found')
+    }
     return user
   }
-  remove(id: string) {
+  async remove(id: string) {
     if (mongoose.Types.ObjectId.isValid(id) === false) {
       // throw new Error('Invalid ID')
-      return 'not found user'
+      throw new Error('Invalid ID')
     }
-    return this.userModel.softDelete({ _id: id })
+    const user = await this.userModel.softDelete({ _id: id })
+    return {
+      message: 'User soft deleted successfully',
+      user
+    }
   }
   isValidPassword(password: string, hashPassword: string) {
     return compareSync(password, hashPassword)
@@ -68,5 +81,33 @@ export class UsersService {
       role: 'USER'
     })
     return user
+  }
+  async createUser(user: CreateUserDto) {
+    const existEmail = await this.userModel.findOne({
+      email: user.email
+    })
+    if (existEmail) {
+      throw new UnauthorizedException('Email already exists')
+    }
+    const newUser = await this.userModel.create(user)
+    return newUser
+  }
+  async findAllUser(page: number, limit: number) {
+    const users = await this.userModel
+      .find()
+      .select('-password')
+      .skip((page - 1) * limit)
+      .limit(limit)
+    const total = await this.userModel.countDocuments()
+    return {
+      message: 'All users fetch successfully',
+      meta: {
+        current: page,
+        pageSize: limit,
+        pages: Math.ceil(total / limit),
+        total: total
+      },
+      result: users
+    }
   }
 }

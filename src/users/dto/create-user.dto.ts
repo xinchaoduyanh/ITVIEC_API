@@ -17,7 +17,6 @@ export class CreateUserDto {
   @IsNotEmpty({ message: 'Email is required' })
   email: string
 
-  @MinLength(6)
   @IsNotEmpty({ message: 'Age is required' })
   age: string
 

@@ -1,9 +1,10 @@
-import { Controller, Request, Post, UseGuards, Body } from '@nestjs/common'
+import { Controller, Request, Post, UseGuards, Body, Res } from '@nestjs/common'
 import { ConfigService } from '@nestjs/config'
 import { AuthService } from './auth.service'
 import { Public, ResponseMessage } from 'src/decorator/customize'
 import { LocalAuthGuard } from './local-auth.guard'
 import { RegisterUserDto } from 'src/users/dto/create-user.dto'
+import { Response } from 'express'
 @Controller('auth')
 export class AuthController {
   constructor(
@@ -15,8 +16,8 @@ export class AuthController {
   @UseGuards(LocalAuthGuard)
   @ResponseMessage('Login user')
   @Post('login')
-  handleLogin(@Request() req) {
-    return this.authService.login(req.user)
+  handleLogin(@Request() req, @Res({ passthrough: true }) res: Response) {
+    return this.authService.login(req.user, res)
   }
 
   @Public()

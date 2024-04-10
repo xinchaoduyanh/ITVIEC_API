@@ -110,4 +110,8 @@ export class UsersService {
       result: users
     }
   }
+  async updateUserToken(_id: string, refreshToken: string) {
+    const user = await this.userModel.findOneAndUpdate({ _id }, { refreshToken }, { new: true })
+    return user
+  }
 }

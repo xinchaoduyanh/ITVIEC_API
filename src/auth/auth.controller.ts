@@ -6,6 +6,7 @@ import { LocalAuthGuard } from './local-auth.guard'
 import { RegisterUserDto } from 'src/users/dto/create-user.dto'
 import { Request, Response } from 'express'
 import { UserInterface } from 'src/users/users.interface'
+
 @Controller('auth')
 export class AuthController {
   constructor(
@@ -41,5 +42,11 @@ export class AuthController {
   handleRefreshToken(@Req() request: Request, @Res({ passthrough: true }) response: Response) {
     const refresh_token = request.cookies['refresh_token']
     return this.authService.processNewToken(refresh_token, response)
+  }
+
+  @ResponseMessage('Logout User')
+  @Get('/logout')
+  handleLogOut(@Res({ passthrough: true }) response: Response, @User() user: UserInterface) {
+    return this.authService.logout(response, user)
   }
 }

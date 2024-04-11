@@ -114,4 +114,13 @@ export class UsersService {
     const user = await this.userModel.findOneAndUpdate({ _id }, { refreshToken }, { new: true })
     return user
   }
+  async findUserByRefreshToken(refreshToken: string) {
+    const user = await this.userModel.findOne({
+      refreshToken
+    })
+    if (!user) {
+      throw new UnauthorizedException('User not found')
+    }
+    return user
+  }
 }

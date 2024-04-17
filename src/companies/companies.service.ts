@@ -73,8 +73,8 @@ export class CompaniesService {
   }
   async findAll(qs: string, page: number, limit: number) {
     const { filter, population, sort } = aqp(qs)
-    delete filter.page
-    delete filter.limit
+    delete filter.current
+    delete filter.pageSize
 
     const offset = (page - 1) * limit
     const defaultLimit = limit

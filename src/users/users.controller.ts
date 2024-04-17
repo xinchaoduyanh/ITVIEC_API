@@ -10,7 +10,7 @@ export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
   @Get()
-  findAllUser(@Query('page') page: number, @Query('limit') limit: number) {
+  findAllUser(@Query('current') page: number, @Query('pageSize') limit: number) {
     const pageNumber = Number(page)
     const limitNumber = Number(limit)
     return this.usersService.findAllUser(pageNumber, limitNumber)

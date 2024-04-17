@@ -39,7 +39,7 @@ export class CompaniesController {
   }
   @Get()
   @ResponseMessage('Get all companies')
-  findAll(@Query() qs: string, @Query('page') page: string, @Query('limit') limit: string) {
+  findAll(@Query() qs: string, @Query('current') page: string, @Query('pageSize') limit: string) {
     console.log(qs)
 
     return this.companiesService.findAll(qs, +page, +limit)

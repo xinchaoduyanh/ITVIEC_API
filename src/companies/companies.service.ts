@@ -104,4 +104,10 @@ export class CompaniesService {
       result
     }
   }
+  async isExistCompany(_id: string) {
+    if (!Types.ObjectId.isValid(_id)) {
+      return Error('Invalid company ID')
+    }
+    return await this.companyModel.findOne({ _id })
+  }
 }

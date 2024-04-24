@@ -1,34 +1,51 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
-import { JobsService } from './jobs.service';
-import { CreateJobDto } from './dto/create-job.dto';
-import { UpdateJobDto } from './dto/update-job.dto';
+import { Controller, Get, Post, Body, Patch, Param, Delete, Query } from '@nestjs/common'
+import { JobsService } from './jobs.service'
+import { CreateJobDto } from './dto/create-job.dto'
+import { UpdateJobDto } from './dto/update-job.dto'
+import { ResponseMessage, User } from 'src/decorator/customize'
+
+import { UserInterface } from 'src/users/users.interface'
 
 @Controller('jobs')
 export class JobsController {
   constructor(private readonly jobsService: JobsService) {}
 
   @Post()
-  create(@Body() createJobDto: CreateJobDto) {
-    return this.jobsService.create(createJobDto);
-  }
-
-  @Get()
-  findAll() {
-    return this.jobsService.findAll();
-  }
-
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.jobsService.findOne(+id);
+  @ResponseMessage('Create a new job')
+  createAJob(@Body() createJobDto: CreateJobDto, @User() user: UserInterface) {
+    return this.jobsService.createAJob(createJobDto, user)
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateJobDto: UpdateJobDto) {
-    return this.jobsService.update(+id, updateJobDto);
+  @ResponseMessage('Update a job')
+  updateAJob(@Param('id') id: string, @Body() updateJobDto: UpdateJobDto) {
+    return this.jobsService.updateAJob(id, updateJobDto)
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.jobsService.remove(+id);
+  @ResponseMessage('Delete a job')
+  deleteAJob(@Param('id') id: string) {
+    return this.jobsService.deleteAJob(id)
   }
+
+  @Get(':id')
+  @ResponseMessage('Fetch job by id')
+  fetchJobById(@Param('id') id: string) {
+    return this.jobsService.fetchJobById(id)
+  }
+
+  @Get()
+  @ResponseMessage('Fetch Job by Pagination')
+  FetchJobByPagination(@Query('current') current: string, @Query('pageSize') pageSize: string) {
+    return this.jobsService.fetchJobsByPagination(Number(current), Number(pageSize))
+  }
+
+  // @Get()
+  // @ResponseMessage('Fetch Job by Pagination')
+  // FetchJobByPagination(@Query('current') page: string, @Query('pageSize') limit: string) {
+  //   return {
+  //     page,
+  //     limit
+  //   }
+  // }
 }

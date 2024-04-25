@@ -5,6 +5,7 @@ import { UpdateJobDto } from './dto/update-job.dto'
 import { ResponseMessage, User } from 'src/decorator/customize'
 
 import { UserInterface } from 'src/users/users.interface'
+import { mongo } from 'mongoose'
 
 @Controller('jobs')
 export class JobsController {
@@ -19,13 +20,14 @@ export class JobsController {
   @Patch(':id')
   @ResponseMessage('Update a job')
   updateAJob(@Param('id') id: string, @Body() updateJobDto: UpdateJobDto) {
+    if (!mongo.ObjectId.isValid(id)) throw new Error('Id is not valid')
     return this.jobsService.updateAJob(id, updateJobDto)
   }
 
   @Delete(':id')
   @ResponseMessage('Delete a job')
-  deleteAJob(@Param('id') id: string) {
-    return this.jobsService.deleteAJob(id)
+  deleteAJob(@Param('id') id: string, @User() user: UserInterface) {
+    return this.jobsService.deleteAJob(id, user)
   }
 
   @Get(':id')
@@ -39,13 +41,4 @@ export class JobsController {
   FetchJobByPagination(@Query('current') current: string, @Query('pageSize') pageSize: string) {
     return this.jobsService.fetchJobsByPagination(Number(current), Number(pageSize))
   }
-
-  // @Get()
-  // @ResponseMessage('Fetch Job by Pagination')
-  // FetchJobByPagination(@Query('current') page: string, @Query('pageSize') limit: string) {
-  //   return {
-  //     page,
-  //     limit
-  //   }
-  // }
 }

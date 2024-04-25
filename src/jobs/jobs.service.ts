@@ -45,7 +45,8 @@ export class JobsService {
     return result
   }
 
-  async deleteAJob(id: string) {
+  async deleteAJob(id: string, user: UserInterface) {
+    await this.jobModel.updateOne({ _id: id }, { $set: { deletedBy: { _id: user._id, email: user.email } } })
     return await this.jobModel.softDelete({ _id: id })
   }
   async fetchJobById(id: string) {
